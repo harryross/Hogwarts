@@ -6,7 +6,7 @@ namespace Hogwarts.Api.Controllers
     {
         [HttpPost]
         [Route("jsonSchema")]
-        public IHttpActionResult CreateSchema(string json)
+        public IHttpActionResult CreateSchema([FromBody]string json)
         {
             return Ok();
         }
