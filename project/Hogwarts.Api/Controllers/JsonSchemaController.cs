@@ -1,4 +1,5 @@
 ﻿using System.Web.Http;
+using Hogwarts.Api.Command;
 
 namespace Hogwarts.Api.Controllers
 {
@@ -8,7 +9,9 @@ namespace Hogwarts.Api.Controllers
         [Route("jsonSchema")]
         public IHttpActionResult CreateSchema([FromBody]string json)
         {
-            return Ok();
+            var converter = new ConvertFromObjectToSchema();
+            var result = converter.GetJsonSchema(json);
+            return Ok(result);
         }
     }
 }
