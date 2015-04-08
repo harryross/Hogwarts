@@ -1,6 +1,6 @@
 ﻿using System.Web.Http;
 
-namespace Hogwarts.Controllers
+namespace Hogwarts.Api.Controllers
 {
     public class JsonSchemaController : ApiController
     {

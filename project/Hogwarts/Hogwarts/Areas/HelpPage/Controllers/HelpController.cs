@@ -1,9 +1,9 @@
 using System;
 using System.Web.Http;
 using System.Web.Mvc;
-using Hogwarts.Areas.HelpPage.Models;
+using Hogwarts.Api.Areas.HelpPage.Models;
 
-namespace Hogwarts.Areas.HelpPage.Controllers
+namespace Hogwarts.Api.Areas.HelpPage.Controllers
 {
     /// <summary>
     /// The controller that will handle requests for the help page.

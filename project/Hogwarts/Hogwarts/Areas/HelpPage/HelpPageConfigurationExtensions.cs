@@ -7,9 +7,10 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Description;
-using Hogwarts.Areas.HelpPage.Models;
+using Hogwarts.Api.Areas.HelpPage.Models;
+using Hogwarts.Api.Areas.HelpPage.SampleGeneration;
 
-namespace Hogwarts.Areas.HelpPage
+namespace Hogwarts.Api.Areas.HelpPage
 {
     public static class HelpPageConfigurationExtensions
     {
