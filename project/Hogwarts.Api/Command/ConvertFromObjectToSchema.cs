@@ -1,4 +1,5 @@
-﻿using Hogwarts.Api.Models;
+﻿using System;
+using Hogwarts.Api.Models;
 using Newtonsoft.Json.Schema;
 
 namespace Hogwarts.Api.Command
@@ -50,6 +51,10 @@ namespace Hogwarts.Api.Command
             else
             {
                 _schemaBuilder += "'" + subs + "': {'type': 'string', 'required': true}";
+            }
+            if (_index == -1)
+            {
+                return;
             }
             if (json.IndexOf(',', temp) < json.IndexOf('}', temp) && json.IndexOf(',', temp) > 0)
             {
