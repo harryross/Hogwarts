@@ -1,4 +1,4 @@
-namespace Hogwarts.Api.Areas.HelpPage.SampleGeneration
+namespace Hogwarts.Api.Areas.HelpPage
 {
     /// <summary>
     /// Indicates whether the sample is used for request or response

@@ -1,6 +1,6 @@
 using System;
 
-namespace Hogwarts.Api.Areas.HelpPage.SampleGeneration
+namespace Hogwarts.Api.Areas.HelpPage
 {
     /// <summary>
     /// This represents an image sample on the help page. There's a display template named ImageSample associated with this class.

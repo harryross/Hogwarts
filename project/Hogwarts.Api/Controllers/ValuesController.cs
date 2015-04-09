@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace Hogwarts.Api.Controllers
 {
     public class ValuesController : ApiController
     {
         // GET api/values
+        [EnableCors(origins: "http://hogwarts.static, http://localhost:9000", headers: "*", methods: "*")]
         public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
