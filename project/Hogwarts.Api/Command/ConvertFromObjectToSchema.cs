@@ -1,6 +1,4 @@
-﻿using System;
-using Hogwarts.Api.Models;
-using Newtonsoft.Json.Schema;
+﻿using Hogwarts.Api.Models;
 
 namespace Hogwarts.Api.Command
 {
@@ -10,8 +8,6 @@ namespace Hogwarts.Api.Command
         private string _schemaBuilder;
         public string GetJsonSchema(JsonObject json)
         {
-            var result = JsonSchema.Parse(json.JsonObjectBody);
-            var generator = new JsonSchemaResolver();
             _schemaBuilder = "";
             _index = 0;
             GenerateSchema(json.JsonObjectBody);
@@ -37,31 +33,48 @@ namespace Hogwarts.Api.Command
             _index = json.IndexOf('\'', _index);
             temp = json.IndexOf('\'', _index + 1);
             subs = json.Substring(_index + 1, temp - 1 - _index);
+            _schemaBuilder += "'" + subs + "':";
             if (json.IndexOf('\'', temp+1) > json.IndexOf('{', temp) && json.IndexOf('{', temp) > 0)
             {
-                _schemaBuilder += "'" + subs + "':";
-                _schemaBuilder += "{";
-                _schemaBuilder += "'type': 'object',";
-                _schemaBuilder += "'required': true,";
-                _schemaBuilder += "'properties': ";
-                _index = json.IndexOf('{', _index);
-                GenerateSchema(json);
-                _schemaBuilder += "}";
+                GenerateJsonObject(json);
+            }
+            else if ((json.IndexOf('\'', temp + 1) > json.IndexOf('[', temp) && json.IndexOf('[', temp) > 0))
+            {
+                GenerateJsonArray(json);
             }
             else
             {
-                _schemaBuilder += "'" + subs + "': {'type': 'string', 'required': true}";
+                _schemaBuilder += "{'type': 'string', 'required': true}";
             }
             if (_index == -1)
             {
                 return;
             }
-            if (json.IndexOf(',', temp) < json.IndexOf('}', temp) && json.IndexOf(',', temp) > 0)
+            if (json.IndexOf(',', _index) < json.IndexOf('}', _index) && json.IndexOf(',', _index) > 0)
             {
                 _schemaBuilder += ",";
                 _index = json.IndexOf(',', _index);
                 GetJsonSubObject(json);
             }
+        }
+
+        private void GenerateJsonArray(string json)
+        {
+            _schemaBuilder += "'type': 'array',";
+            _schemaBuilder += "'items': [";
+            GenerateSchema(json);
+            _schemaBuilder += "]";
+        }
+
+        private void GenerateJsonObject(string json)
+        {
+            _schemaBuilder += "{";
+            _schemaBuilder += "'type': 'object',";
+            _schemaBuilder += "'required': true,";
+            _schemaBuilder += "'properties': ";
+            _index = json.IndexOf('{', _index);
+            GenerateSchema(json);
+            _schemaBuilder += "}";
         }
     }
 }
