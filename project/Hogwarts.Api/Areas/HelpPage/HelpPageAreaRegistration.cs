@@ -1,6 +1,5 @@
 using System.Web.Http;
 using System.Web.Mvc;
-using Hogwarts.Api.Areas.HelpPage.App_Start;
 
 namespace Hogwarts.Api.Areas.HelpPage
 {
