@@ -30,9 +30,6 @@ namespace Hogwarts.Api.Command
             {
                 GenerateSchema(json);
             }
-            {
-
-            }
             _schemaBuilder += "}";
         }
 
