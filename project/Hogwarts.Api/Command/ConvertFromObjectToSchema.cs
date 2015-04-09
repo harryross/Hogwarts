@@ -1,4 +1,5 @@
-﻿using Hogwarts.Api.Models;
+﻿using System.Data.Odbc;
+using Hogwarts.Api.Models;
 
 namespace Hogwarts.Api.Command
 {
@@ -24,10 +25,6 @@ namespace Hogwarts.Api.Command
 
         private void GetJsonSubObject(string json)
         {
-            if (_index == -1)
-            {
-                return;
-            }
             int temp = 0;
             string subs = "";
             _index = json.IndexOf('\'', _index);
@@ -36,26 +33,38 @@ namespace Hogwarts.Api.Command
             _schemaBuilder += "'" + subs + "':";
             if (json.IndexOf('\'', temp+1) > json.IndexOf('{', temp) && json.IndexOf('{', temp) > 0)
             {
+                _index = json.IndexOf('{', _index);
                 GenerateJsonObject(json);
             }
             else if ((json.IndexOf('\'', temp + 1) > json.IndexOf('[', temp) && json.IndexOf('[', temp) > 0))
             {
+                _index = json.IndexOf('[', _index);
                 GenerateJsonArray(json);
             }
             else
             {
+                _index = json.IndexOf('\'', _index+1);
+                _index = json.IndexOf('\'', _index+1);
+                _index = json.IndexOf('\'', _index+1);
                 _schemaBuilder += "{'type': 'string', 'required': true}";
             }
-            if (_index == -1)
-            {
-                return;
-            }
-            if (json.IndexOf(',', _index) < json.IndexOf('}', _index) && json.IndexOf(',', _index) > 0)
+            if (IsThereAComma(json))
             {
                 _schemaBuilder += ",";
                 _index = json.IndexOf(',', _index);
                 GetJsonSubObject(json);
             }
+            else
+            {
+                //_index = json.IndexOf('}', _index)+1;
+            }
+        }
+
+        private bool IsThereAComma(string json)
+        {
+            int indexOfBracket = json.IndexOf('}', _index);
+            int indexOfComma = json.IndexOf(',', _index);
+            return indexOfBracket > indexOfComma;
         }
 
         private void GenerateJsonArray(string json)
