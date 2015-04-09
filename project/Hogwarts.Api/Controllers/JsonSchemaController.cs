@@ -3,6 +3,7 @@ using System.Web.Http.Cors;
 using System.Web.Mvc;
 using Hogwarts.Api.Command;
 using Hogwarts.Api.Models;
+using Newtonsoft.Json.Linq;
 
 namespace Hogwarts.Api.Controllers
 {
@@ -17,7 +18,8 @@ namespace Hogwarts.Api.Controllers
         {
             var converter = new ConvertFromObjectToSchema();
             var result = converter.GetJsonSchema(json);
-            return Ok(result);
+            //return Ok(result);
+            return Ok(JObject.Parse(result));
         }
     }
 }
