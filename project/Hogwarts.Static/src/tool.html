@@ -10,7 +10,16 @@
               <label for="json-input">Copy and paste your JSON object in here:</label>
               <textarea value.bind="jsonInput" class="form-control" rows="10" id="json-input"></textarea>
             </div>
-
+            
+            <div class="form-group">
+              <label for="json-options">Indicate which of your properties are required:</label>
+              <div class="checkbox" repeat.for="jsonProp of jsonProps">
+                <label>
+                  <input type="checkbox" value="${jsonProp}">
+                  ${jsonProp}
+                </label>
+              </div>
+            </div>
             <button type="submit" class="btn btn-default btn-primary">Submit</button>
           </form>
         </div>
@@ -22,6 +31,21 @@
           </div>
         </div>
 
+      </div>
+
+      <div class="example">
+      <br><br>
+        <h4>An example JSON object:</h4>
+        <pre>
+{
+  "Harry": "hello",
+  "Bex": {
+    "age": 26,    
+    "job": "developer"
+  },
+  "Dan": "yuppers"
+}
+        </pre>
       </div>
       
   </section>

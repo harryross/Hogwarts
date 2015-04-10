@@ -1,12 +1,9 @@
 import {HttpClient} from 'aurelia-http-client';
 
-//var url = 'http://hogwarts.api/api/values';
-
 export class tool{
   static inject() { return [HttpClient]; }
   constructor(http){
     this.heading = 'JSON Tool';
-    //this.values = [];
     this.client = new HttpClient()
       .configure(x => {
         x.withBaseUri('http://hogwarts.api');
@@ -14,38 +11,47 @@ export class tool{
     });
     this.jsonInput = "";
     this.jsonOutput = "";
+    this.jsonProps = [];
   }
 
-  // activate(){
-  //   return this.http.get(url).then(response => {
-  //     this.values = response.content;
-  //     console.log('this.values', this.values);
-  //   });
-  // }
+  get jsonProps(){ 
 
-  activate(){
-    for (var prop in this.jsonInput) {
-      console.log(' name=' + prop + ' value=' + this.jsonInput[prop]);
+    var array = [];
+    var obj = this.jsonInput;
+
+    for (var x in obj) {
+      if (x > 4 && x < 10) {
+        array.push(obj[x]);
+      }
     }
 
+    return array;
+  }
+
+  set jsonProps(jsonPropArray) {
+    this.jsonInput = jsonPropArray;
   }
 
   submit(){
+    var formatted = this.format(this.jsonInput);
 
-    //this.jsonOutput = this.jsonInput;
-
-    this.client.post('/jsonSchema', JSON.stringify(this.jsonInput)).then(response => {
+    this.client.post('/jsonSchema', formatted).then(response => {
       
       if (response.statusCode === 200) {
         console.log('Success');
+        this.jsonOutput = response.response;
       } else {
-        console.log('Response', response);
         alert('Something went wrong');
       }
 
       console.log("Response", response);
     });
 
+  }
+
+  format(json){
+    var replaced = json.replace(/"/g, "'");
+    return '{"JsonObjectBody": "' + replaced + '"}';
   }
 
 }
