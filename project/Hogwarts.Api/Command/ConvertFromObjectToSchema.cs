@@ -127,19 +127,19 @@ namespace Hogwarts.Api.Command
             {
                 var startIdx = jsonArray.IndexOf('{', cursor);
                 var endIdx = jsonArray.IndexOf('}', cursor + 1);
-				string[] properties = jsonArray.Substring(startIdx + 1, endIdx - startIdx - 1).Trim().Split(',');
+                string[] properties = jsonArray.Substring(startIdx + 1, endIdx - startIdx - 1).Trim().Split(',');
 
                 foreach (var property in properties)
                 {
-					var details = property.Split(':');
-					
+                    var details = property.Split(':');
+                    
                     arrayProperties.Add(
                         new JsonProperty
                         {
                             Title = details[0],
-							Type = PropertyType.GetType(details[1])
-						}
-					);
+                            Type = PropertyType.GetType(details[1])
+                        }
+                    );
                 }
 
                 arrayElementsProcessed++;
@@ -151,8 +151,8 @@ namespace Hogwarts.Api.Command
             // Assign the IsRequired value
             for (int i = 0; i < distinctProperties.Count(); i++)
             {
-				var count = arrayProperties.Count(p => p.Title == distinctProperties[i].Title);
-				distinctProperties[i].IsRequired = count == arrayElementsProcessed;
+                var count = arrayProperties.Count(p => p.Title == distinctProperties[i].Title);
+                distinctProperties[i].IsRequired = count == arrayElementsProcessed;
             }
 
             return distinctProperties;
