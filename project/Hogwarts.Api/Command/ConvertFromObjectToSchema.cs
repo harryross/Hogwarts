@@ -1,4 +1,9 @@
-﻿using System.Data.Odbc;
+﻿using System;
+using System.Collections.Generic;
+using System.Data.Odbc;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Hogwarts.Api.Helpers;
 using Hogwarts.Api.Models;
 
 namespace Hogwarts.Api.Command
@@ -91,5 +96,52 @@ namespace Hogwarts.Api.Command
         {
             _schemaBuilder += "{'type': 'string', 'required': true}";
         }
+
+
+		public IEnumerable<JsonProperty> GetArrayProperties(string jsonArray)
+		{
+			var arrayElementsProcessed = 0;
+			var arrayProperties = new List<JsonProperty>();
+			var cursor = jsonArray.IndexOf('{');
+
+			while (jsonArray.IndexOf(',', cursor) != -1)
+			{
+				var startIdx = jsonArray.IndexOf('{', cursor);
+				var endIdx = jsonArray.IndexOf('}', cursor + 1);
+				string[] properties = jsonArray.Substring(startIdx, endIdx - startIdx).Trim().Split(',');
+
+				foreach (var property in properties)
+				{
+					var details = Regex.Matches(property, @"([^{]*)")[1].ToString().Split(':');
+					arrayProperties.Add(
+						new JsonProperty
+						{
+							Title = details[0],
+							Type = PropertyType.GetType(details[1]),
+							IsRequired = true // this will need to be looked at later regardless, so maybe don't bother setting it yet?
+						});
+				}
+
+				arrayElementsProcessed++;
+				cursor = endIdx;
+			}
+
+			// Get the distinct properties
+			var distinctProperties = arrayProperties.GroupBy(p => p.Title).Select(grp => grp.First()).ToList();
+			// Assign the IsRequired value
+			for (int i = 0; i < distinctProperties.Count(); i++)
+			{
+				var count = arrayProperties.Count(p => p.Title == distinctProperties[0].Title);
+				distinctProperties[0].IsRequired = count == arrayElementsProcessed;
+			}
+
+			return distinctProperties;
+		}
+
+		private string BuildArrayString(string jsonArray)
+		{
+			var properties = GetArrayProperties(jsonArray);
+			throw new NotImplementedException();
+		}
     }
 }
