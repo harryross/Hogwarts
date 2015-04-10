@@ -18,7 +18,9 @@ namespace Hogwarts.Api.Command
             _schemaBuilder = "";
             _index = 0;
             _indent = 0;
+            json.JsonObjectBody.Replace(" ", "");
             StartSchema(json.JsonObjectBody);
+            
             return _schemaBuilder;
         }
 

@@ -10,7 +10,6 @@ export class tool{
         x.withHeader('Content-Type', 'application/json');
     });
     this.jsonInput = "";
-    this.jsonOutput = "";
     this.jsonProps = [];
   }
 
@@ -33,13 +32,17 @@ export class tool{
   }
 
   submit(){
-    var formatted = this.format(this.jsonInput);
+    var objectified,
+        formatted,
+        wrapped = this.wrap(this.jsonInput);
 
-    this.client.post('/jsonSchema', formatted).then(response => {
+    this.client.post('/jsonSchema', wrapped).then(response => {
       
       if (response.statusCode === 200) {
-        console.log('Success');
-        this.jsonOutput = response.response;
+        objectified = JSON.parse(response.response);
+        formatted = JSON.stringify(objectified, null, 4);
+
+        document.getElementById('json-output').innerText = formatted;
       } else {
         alert('Something went wrong');
       }
@@ -49,7 +52,7 @@ export class tool{
 
   }
 
-  format(json){
+  wrap(json){
     var replaced = json.replace(/"/g, "'");
     return '{"JsonObjectBody": "' + replaced + '"}';
   }
