@@ -18,9 +18,23 @@ export class tool{
     var array = [];
     var obj = this.jsonInput;
 
-    for (var x in obj) {
-      if (x > 4 && x < 10) {
-        array.push(obj[x]);
+    console.log('original type', typeof obj);
+
+    if (typeof obj === 'string') { //try catch error unexpected syntax (only works if you paste in object straight away)
+
+      var newObj = JSON.parse(obj);
+
+      for (var x in newObj) {
+
+        array.push(x);
+
+        if (typeof newObj[x] === 'object') {
+          var subObject = newObj[x]; //at the moment will only work for one nested level deep
+
+          for (var y in subObject) {
+            array.push(x + "." + y);
+          }
+        }
       }
     }
 
