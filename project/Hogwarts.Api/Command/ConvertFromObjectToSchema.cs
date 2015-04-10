@@ -94,54 +94,73 @@ namespace Hogwarts.Api.Command
 
         private void GetObjectType(string json)
         {
-            _schemaBuilder += "{'type': 'string', 'required': true}";
+            int endoftype = 0;
+            if (json.IndexOf(',', _index) < json.IndexOf('}', _index))
+            {
+                if (json.IndexOf(',', _index) == -1)
+                {
+                    endoftype = json.IndexOf('}', _index);
+                }
+                else
+                {
+                    endoftype = json.IndexOf(',', _index);
+                }
+            }
+            else
+            {
+                endoftype = json.IndexOf('}', _index);
+            }
+            string type = json.Substring(_index + 1, endoftype - 1 - _index);
+            type = type.Replace(" ", string.Empty);
+            string property = PropertyType.GetType(type);
+            _schemaBuilder += "{'type': '"+property+"', 'required': true}";
         }
 
 
-		public IEnumerable<JsonProperty> GetArrayProperties(string jsonArray)
-		{
-			var arrayElementsProcessed = 0;
-			var arrayProperties = new List<JsonProperty>();
-			var cursor = jsonArray.IndexOf('{');
+        public IEnumerable<JsonProperty> GetArrayProperties(string jsonArray)
+        {
+            var arrayElementsProcessed = 0;
+            var arrayProperties = new List<JsonProperty>();
+            var cursor = jsonArray.IndexOf('{');
 
-			while (jsonArray.IndexOf(',', cursor) != -1)
-			{
-				var startIdx = jsonArray.IndexOf('{', cursor);
-				var endIdx = jsonArray.IndexOf('}', cursor + 1);
-				string[] properties = jsonArray.Substring(startIdx, endIdx - startIdx).Trim().Split(',');
+            while (jsonArray.IndexOf(',', cursor) != -1)
+            {
+                var startIdx = jsonArray.IndexOf('{', cursor);
+                var endIdx = jsonArray.IndexOf('}', cursor + 1);
+                string[] properties = jsonArray.Substring(startIdx, endIdx - startIdx).Trim().Split(',');
 
-				foreach (var property in properties)
-				{
-					var details = Regex.Matches(property, @"([^{]*)")[1].ToString().Split(':');
-					arrayProperties.Add(
-						new JsonProperty
-						{
-							Title = details[0],
-							Type = PropertyType.GetType(details[1]),
-							IsRequired = true // this will need to be looked at later regardless, so maybe don't bother setting it yet?
-						});
-				}
+                foreach (var property in properties)
+                {
+                    var details = Regex.Matches(property, @"([^{]*)")[1].ToString().Split(':');
+                    arrayProperties.Add(
+                        new JsonProperty
+                        {
+                            Title = details[0],
+                            Type = PropertyType.GetType(details[1]),
+                            IsRequired = true // this will need to be looked at later regardless, so maybe don't bother setting it yet?
+                        });
+                }
 
-				arrayElementsProcessed++;
-				cursor = endIdx;
-			}
+                arrayElementsProcessed++;
+                cursor = endIdx;
+            }
 
-			// Get the distinct properties
-			var distinctProperties = arrayProperties.GroupBy(p => p.Title).Select(grp => grp.First()).ToList();
-			// Assign the IsRequired value
-			for (int i = 0; i < distinctProperties.Count(); i++)
-			{
-				var count = arrayProperties.Count(p => p.Title == distinctProperties[0].Title);
-				distinctProperties[0].IsRequired = count == arrayElementsProcessed;
-			}
+            // Get the distinct properties
+            var distinctProperties = arrayProperties.GroupBy(p => p.Title).Select(grp => grp.First()).ToList();
+            // Assign the IsRequired value
+            for (int i = 0; i < distinctProperties.Count(); i++)
+            {
+                var count = arrayProperties.Count(p => p.Title == distinctProperties[0].Title);
+                distinctProperties[0].IsRequired = count == arrayElementsProcessed;
+            }
 
-			return distinctProperties;
-		}
+            return distinctProperties;
+        }
 
-		private string BuildArrayString(string jsonArray)
-		{
-			var properties = GetArrayProperties(jsonArray);
-			throw new NotImplementedException();
-		}
+        private string BuildArrayString(string jsonArray)
+        {
+            var properties = GetArrayProperties(jsonArray);
+            throw new NotImplementedException();
+        }
     }
 }
